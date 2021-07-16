@@ -11,15 +11,7 @@ from .serializers import TaskSerializer
 
 class TaskList(APIView):
     def get(self, request, format=None):
-        tasks = None
-        if request.GET['usuario'] is None:
-
-            tasks = Task.objects.all()
-
-        else:
-
-            tasks = Task.objects.get(Task.user_id == request.GET['usuario'])
-
+        tasks = Task.objects.all()
         serializer = TaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
