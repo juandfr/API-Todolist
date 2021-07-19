@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import Http404
 
@@ -11,7 +12,12 @@ from .serializers import TaskSerializer
 
 class TaskList(APIView):
     def get(self, request, format=None):
+        
+
         tasks = Task.objects.all()
+           
+           
+        
         serializer = TaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
@@ -21,7 +27,17 @@ class TaskList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class TaskFilter(APIView):
+    def get_object(self, fk):
+        try:
+            return Task.objects.get(user_id=fk)
+        except Task.DoesNotExist:
+            raise Http404
 
+    def get(self, request, fk, format=None):
+        tasks = Task.objects.filter(user_id=fk)    
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data)
 
 class TaskDetail(APIView):
     def get_object(self, pk):
